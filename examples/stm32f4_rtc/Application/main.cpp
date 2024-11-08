@@ -12,6 +12,7 @@
 #include "main.hpp"
 #include "globals.hpp"
 #include "Helper.hpp"
+#include "rtc.h"
 #include "RunEvery.hpp"
 #include "Stm32ItmLogger.hpp"
 
@@ -30,6 +31,25 @@ void setup() {
 
     Serial1.begin();
     Serial1.print('\0');
+
+    RTC_TimeTypeDef sTime = {0};
+    sTime.Hours = 18;
+    sTime.Minutes = 45;
+    sTime.Seconds = 0;
+    sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+    sTime.StoreOperation = RTC_STOREOPERATION_RESET;
+    if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK) {
+        Error_Handler();
+    }
+
+    RTC_DateTypeDef sDate = {0};
+    sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
+    sDate.Month = RTC_MONTH_NOVEMBER;
+    sDate.Date = 8;
+    sDate.Year = 24;
+    if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK) {
+        Error_Handler();
+    }
 }
 
 
@@ -39,17 +59,27 @@ void setup() {
  * @see mainLoopThread() in AZURE_RTOS/App/app_azure_rtos.c
  */
 void loop() {
-
     Serial1.loop();
 
     dummyCpp++;
     dummyCandCpp++;
 
-    static Stm32Common::RunEvery blinker;
+    static Stm32Common::RunEvery re1;
+    if (re1.loop(1000)) {
+        RTC_TimeTypeDef sTime = {0};
+        RTC_DateTypeDef sDate = {0};
 
+        HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+        HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+        Serial1.printf("-> RTC Value: %04d-%02d-%02d %02d:%02d:%02d\r\n",
+            2000 + sDate.Year, sDate.Month, sDate.Date,
+            sTime.Hours, sTime.Minutes, sTime.Seconds);
+    }
+
+    static Stm32Common::RunEvery blinker;
     if (blinker.loop(300)) {
         HAL_GPIO_TogglePin(LED1_GRN_GPIO_Port, LED1_GRN_Pin);
-        Stm32ItmLogger::logger.println(dummyCpp);
     }
 }
 
