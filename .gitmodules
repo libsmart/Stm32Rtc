@@ -1,0 +1,12 @@
+[submodule "examples/stm32f4_rtc/Lib/Stm32Serial"]
+	path = examples/stm32f4_rtc/Lib/Stm32Serial
+	url = https://github.com/libsmart/Stm32Serial.git
+[submodule "examples/stm32f4_rtc/Lib/Stm32Common"]
+	path = examples/stm32f4_rtc/Lib/Stm32Common
+	url = https://github.com/libsmart/Stm32Common.git
+[submodule "examples/stm32f4_rtc/Lib/Stm32ItmLogger"]
+	path = examples/stm32f4_rtc/Lib/Stm32ItmLogger
+	url = https://github.com/libsmart/Stm32ItmLogger.git
+[submodule "examples/stm32f4_rtc/Lib/Stm32Shell"]
+	path = examples/stm32f4_rtc/Lib/Stm32Shell
+	url = https://github.com/libsmart/Stm32Shell.git

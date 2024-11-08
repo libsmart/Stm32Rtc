@@ -24,7 +24,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "defines.h"
+#include "globals.h"
+#include "main.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -92,6 +94,9 @@ int main(void)
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
 
+  // Jump to our C++ setup function
+  setup();
+
   /* USER CODE END 2 */
 
   /* Infinite loop */
@@ -101,6 +106,10 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
+
+    // Jump to our C++ loop function
+    loop();
+
   }
   /* USER CODE END 3 */
 }
@@ -185,6 +194,10 @@ void Error_Handler(void)
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
   __disable_irq();
+
+  // Jump to our C++ setup function
+  errorHandler();
+
   while (1)
   {
   }
