@@ -29,6 +29,7 @@ void setup() {
     dummyCandCpp = 0;
 
     Serial1.begin();
+    Serial1.print('\0');
 }
 
 
