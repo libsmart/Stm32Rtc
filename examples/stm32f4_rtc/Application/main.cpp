@@ -15,6 +15,7 @@
 #include "rtc.h"
 #include "RunEvery.hpp"
 #include "Stm32ItmLogger.hpp"
+#include "Stm32Rtc.hpp"
 
 
 /**
@@ -32,24 +33,30 @@ void setup() {
     Serial1.begin();
     Serial1.print('\0');
 
-    RTC_TimeTypeDef sTime = {0};
-    sTime.Hours = 18;
-    sTime.Minutes = 45;
-    sTime.Seconds = 0;
-    sTime.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
-    sTime.StoreOperation = RTC_STOREOPERATION_RESET;
-    if (HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN) != HAL_OK) {
-        Error_Handler();
-    }
 
-    RTC_DateTypeDef sDate = {0};
-    sDate.WeekDay = RTC_WEEKDAY_FRIDAY;
-    sDate.Month = RTC_MONTH_NOVEMBER;
-    sDate.Date = 8;
-    sDate.Year = 24;
-    if (HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN) != HAL_OK) {
-        Error_Handler();
-    }
+    // newlocale(LC_ALL, "de_CH");
+
+
+    Serial1.printf("setlocale: %s\r\n", setlocale(LC_TIME, "de_DE"));
+
+    Stm32Rtc::TimeType time;
+    time.Hours = 18;
+    time.Minutes = 45;
+    time.Seconds = 0;
+    time.DayLightSaving = RTC_DAYLIGHTSAVING_NONE;
+    time.StoreOperation = RTC_STOREOPERATION_RESET;
+    // if (HAL_RTC_SetTime(&hrtc, &time, RTC_FORMAT_BIN) != HAL_OK) {
+    // Error_Handler();
+    // }
+
+    Stm32Rtc::DateType date;
+    date.WeekDay = RTC_WEEKDAY_FRIDAY;
+    date.Month = RTC_MONTH_NOVEMBER;
+    date.Date = 8;
+    date.Year = 24;
+    // if (HAL_RTC_SetDate(&hrtc, &date, RTC_FORMAT_BIN) != HAL_OK) {
+    // Error_Handler();
+    // }
 }
 
 
@@ -66,15 +73,36 @@ void loop() {
 
     static Stm32Common::RunEvery re1;
     if (re1.loop(1000)) {
-        RTC_TimeTypeDef sTime = {0};
-        RTC_DateTypeDef sDate = {0};
+        // Stm32Rtc::TimeType time;
+        // Stm32Rtc::DateType date;
+        Stm32Rtc::DateTimeType dateTime;
 
-        HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-        HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+        // HAL_RTC_GetTime(&hrtc, &dateTime, RTC_FORMAT_BIN);
+        // HAL_RTC_GetDate(&hrtc, &dateTime, RTC_FORMAT_BIN);
+
+        rtc.getDateTime(&dateTime);
 
         Serial1.printf("-> RTC Value: %04d-%02d-%02d %02d:%02d:%02d\r\n",
-            2000 + sDate.Year, sDate.Month, sDate.Date,
-            sTime.Hours, sTime.Minutes, sTime.Seconds);
+                       2000 + dateTime.Year, dateTime.Month, dateTime.Date,
+                       dateTime.Hours, dateTime.Minutes, dateTime.Seconds);
+        Serial1.printf("timestamp: %d\r\n", dateTime.getTimestamp());
+        char str[100]{0};
+        dateTime.strftime(str, sizeof(str), "%Y-%m-%d %H:%M:%S");
+        Serial1.printf("strftime: %s\r\n", str);
+
+        std::memset(str, 0, sizeof(str));
+        dateTime.strftime(str, sizeof(str), "%H:%M:%S, %e. %B %Y");
+        Serial1.printf("strftime: %s\r\n", str);
+
+        std::memset(str, 0, sizeof(str));
+        dateTime.strftime(str, sizeof(str), "%X, %x");
+        Serial1.printf("strftime: %s\r\n", str);
+
+        tm timeinfo{0};
+        dateTime.getStructTm(&timeinfo);
+        Serial1.printf("asctime: %s\r\n", asctime(&timeinfo));
+
+        Serial1.println();
     }
 
     static Stm32Common::RunEvery blinker;

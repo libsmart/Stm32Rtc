@@ -68,6 +68,7 @@ file(GLOB_RECURSE SOURCES "Core/*.*" "Drivers/*.*"
 )
 
 add_compile_definitions(-DPRINTF_INCLUDE_CONFIG_H)
+add_compile_definitions(-D__use_utf8_ctype)
 
 set(LINKER_SCRIPT ${CMAKE_SOURCE_DIR}/STM32F407VGTX_FLASH.ld)
 

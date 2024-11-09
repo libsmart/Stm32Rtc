@@ -14,10 +14,13 @@
 #include "globals.h"
 #include <cstdint>
 #include "Stm32ItmLogger.hpp"
+
 #include "usart.h"
 #include "Driver/Stm32HalUartItDriver.hpp"
 #include "ezShell/Shell.hpp"
 
+#include "rtc.h"
+#include "Stm32Rtc.hpp"
 
 #ifdef __cplusplus
 extern "C" {
@@ -31,6 +34,9 @@ inline Stm32ItmLogger::Stm32ItmLogger &Logger = Stm32ItmLogger::logger;
 inline Stm32Common::StreamSession::Manager<Stm32Shell::ezShell::Shell, 1> microrlStreamSessionManager(&Logger);
 inline Stm32Serial::Stm32HalUartItDriver uart1Driver(&huart1, "uart1Driver");
 inline Stm32Serial::Stm32Serial Serial1(&uart1Driver, &microrlStreamSessionManager);
+
+
+inline Stm32Rtc::Rtc rtc(&hrtc, &Stm32ItmLogger::logger);
 
 #ifdef __cplusplus
 }
