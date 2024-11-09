@@ -67,7 +67,6 @@ file(GLOB_RECURSE SOURCES ${sources}
 )
 
 add_compile_definitions(-DPRINTF_INCLUDE_CONFIG_H)
-add_compile_definitions(-D__use_utf8_ctype)
 
 set(LINKER_SCRIPT $${CMAKE_SOURCE_DIR}/${linkerScript})
 
