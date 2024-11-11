@@ -17,6 +17,10 @@ void Rtc::getTime(TimeType *time) {
     }
 }
 
+void Rtc::setTime(const TimeType *time) {
+    setRtcTime(time);
+}
+
 void Rtc::getDate(DateType *date) {
     TimeType tmpTime;
     auto retTime = getRtcTime(&tmpTime);
@@ -24,6 +28,10 @@ void Rtc::getDate(DateType *date) {
     if (RTC_Handle->Instance == nullptr || retDate != HAL_OK || retTime != HAL_OK) {
         date->reset();
     }
+}
+
+void Rtc::setDate(const DateType *date) {
+    setRtcDate(date);
 }
 
 void Rtc::getDateTime(DateTimeType *dateTime) {
@@ -34,14 +42,31 @@ void Rtc::getDateTime(DateTimeType *dateTime) {
     }
 }
 
+void Rtc::setDateTime(const DateTimeType *dateTime) {
+    setTime(dateTime);
+    setDate(dateTime);
+}
+
 HAL::HAL_StatusTypeDef Rtc::getRtcTime(HAL::RTC_TimeTypeDef *halTime) {
     return RTC_Handle->Instance == nullptr
                ? HAL_ERROR
                : HAL_RTC_GetTime(RTC_Handle, halTime, RTC_FORMAT_BIN);
 }
 
+HAL::HAL_StatusTypeDef Rtc::setRtcTime(const HAL::RTC_TimeTypeDef *halTime) {
+    return RTC_Handle->Instance == nullptr
+               ? HAL_ERROR
+               : HAL_RTC_SetTime(RTC_Handle, const_cast<HAL::RTC_TimeTypeDef *>(halTime), RTC_FORMAT_BIN);
+}
+
 HAL::HAL_StatusTypeDef Rtc::getRtcDate(HAL::RTC_DateTypeDef *halDate) {
     return RTC_Handle->Instance == nullptr
                ? HAL_ERROR
                : HAL_RTC_GetDate(RTC_Handle, halDate, RTC_FORMAT_BIN);
+}
+
+HAL::HAL_StatusTypeDef Rtc::setRtcDate(const HAL::RTC_DateTypeDef *halDate) {
+    return RTC_Handle->Instance == nullptr
+               ? HAL_ERROR
+               : HAL_RTC_SetDate(RTC_Handle, const_cast<HAL::RTC_DateTypeDef *>(halDate), RTC_FORMAT_BIN);
 }

@@ -37,6 +37,8 @@ namespace Stm32Rtc {
          */
         void getTime(TimeType *time);
 
+        void setTime(const TimeType *time);
+
         /**
          * Retrieves the current date from the RTC and stores it in the provided DateType structure.
          * If the RTC instance is not initialized, or there is an error retrieving the date or time,
@@ -45,6 +47,8 @@ namespace Stm32Rtc {
          * @param date Pointer to a DateType structure where the retrieved date will be stored.
          */
         void getDate(DateType *date);
+
+        void setDate(const DateType *date);
 
         /**
          * Retrieves the current date and time from the RTC and stores it in the provided DateTimeType structure.
@@ -55,6 +59,7 @@ namespace Stm32Rtc {
          */
         void getDateTime(DateTimeType *dateTime);
 
+        void setDateTime(const DateTimeType *dateTime);
 
 
 
@@ -68,6 +73,8 @@ namespace Stm32Rtc {
          */
         HAL::HAL_StatusTypeDef getRtcTime(HAL::RTC_TimeTypeDef *halTime);
 
+        HAL::HAL_StatusTypeDef setRtcTime(const HAL::RTC_TimeTypeDef *halTime);
+
         /**
          * Retrieves the current date from the RTC and stores it in the provided RTC_DateTypeDef structure.
          * If the RTC instance is not initialized, the function returns HAL_ERROR.
@@ -76,6 +83,8 @@ namespace Stm32Rtc {
          * @return HAL_StatusTypeDef indicating the status of the operation: HAL_OK if successful, HAL_ERROR otherwise.
          */
         HAL::HAL_StatusTypeDef getRtcDate(HAL::RTC_DateTypeDef *halDate);
+
+        HAL::HAL_StatusTypeDef setRtcDate(const HAL::RTC_DateTypeDef *halDate);
 
         /** The handle to the RTC */
         RTC_HandleTypeDef *RTC_Handle;

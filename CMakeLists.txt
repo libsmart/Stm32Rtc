@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.27)
-project(Stm32Rtc C)
 
-set(CMAKE_C_STANDARD 11)
+project(Stm32Rtc)
 
-add_library(Stm32Rtc STATIC src/Stm32Rtc.cpp)
+file(GLOB_RECURSE SOURCES ${sources}
+        "src/*.*"
+)
+add_library(Stm32Rtc STATIC ${SOURCES})
+
+target_include_directories(${PROJECT_NAME} PUBLIC
+        src
+)

@@ -16,6 +16,33 @@ namespace Stm32Rtc {
 
     class DateType : public HAL::RTC_DateTypeDef {
     public:
+        /*
+        using WEEKDAY = enum WEEKDAY: uint8_t {
+            WEEKDAY_MONDAY = 1,
+            WEEKDAY_TUESDAY = 2,
+            WEEKDAY_WEDNESDAY = 3,
+            WEEKDAY_THURSDAY = 4,
+            WEEKDAY_FRIDAY = 5,
+            WEEKDAY_SATURDAY = 6,
+            WEEKDAY_SUNDAY = 7
+        };
+
+        using MONTH = enum MONTH: uint8_t {
+            MONTH_JANUARY = 1,
+            MONTH_FEBRUARY = 2,
+            MONTH_MARCH = 3,
+            MONTH_APRIL = 4,
+            MONTH_MAY = 5,
+            MONTH_JUNE = 6,
+            MONTH_JULI = 7,
+            MONTH_AUGUST = 8,
+            MONTH_SEPTEMBER = 9,
+            MONTH_OCTOBER = 10,
+            MONTH_NOVEMBER = 11,
+            MONTH_DECEMBER = 12
+        };
+*/
+
         DateType() : HAL::RTC_DateTypeDef{0} { ; }
 
         DateType(const DateType &other) = default;
@@ -41,8 +68,6 @@ namespace Stm32Rtc {
         void reset() { *static_cast<HAL::RTC_DateTypeDef *>(this) = {0}; }
 
         bool isValid() { return Month >= 1 && Month <= 12; };
-
-
     };
 }
 #endif
