@@ -8,43 +8,53 @@
 
 using namespace Stm32Rtc;
 
-void Rtc::getTime(TimeType *time) {
+void Rtc::getTime(TimeType &time) {
     DateType tmpDate;
-    auto retTime = getRtcTime(time);
+    auto retTime = getRtcTime(&time);
     auto retDate = getRtcDate(&tmpDate);
     if (RTC_Handle->Instance == nullptr || retDate != HAL_OK || retTime != HAL_OK) {
-        time->reset();
+        time.reset();
     }
 }
 
-void Rtc::setTime(const TimeType *time) {
-    setRtcTime(time);
+bool Rtc::setTime(const TimeType &time) {
+    return setRtcTime(&time) == HAL_OK;
 }
 
-void Rtc::getDate(DateType *date) {
+void Rtc::getDate(DateType &date) {
     TimeType tmpTime;
     auto retTime = getRtcTime(&tmpTime);
-    auto retDate = getRtcDate(date);
+    auto retDate = getRtcDate(&date);
     if (RTC_Handle->Instance == nullptr || retDate != HAL_OK || retTime != HAL_OK) {
-        date->reset();
+        date.reset();
     }
 }
 
-void Rtc::setDate(const DateType *date) {
-    setRtcDate(date);
+bool Rtc::setDate(const DateType &date) {
+    return setRtcDate(&date) == HAL_OK;
 }
 
-void Rtc::getDateTime(DateTimeType *dateTime) {
-    auto retTime = getRtcTime(dateTime);
-    auto retDate = getRtcDate(dateTime);
+bool Rtc::getDateTime(DateTimeType &dateTime) {
+    auto retTime = getRtcTime(&dateTime);
+    auto retDate = getRtcDate(&dateTime);
     if (RTC_Handle->Instance == nullptr || retDate != HAL_OK || retTime != HAL_OK) {
-        dateTime->reset();
+        dateTime.reset();
+#if __EXCEPTIONS
+        throw std::runtime_error("getDateTime failed");
+#endif
+        return false;
     }
+    return true;
 }
 
-void Rtc::setDateTime(const DateTimeType *dateTime) {
-    setTime(dateTime);
-    setDate(dateTime);
+bool Rtc::setDateTime(const DateTimeType &dateTime) {
+    if (setDate(dateTime) && setTime(dateTime)) {
+        return true;
+    }
+#if __EXCEPTIONS
+    throw std::runtime_error("setDateTime failed");
+#endif
+    return false;
 }
 
 HAL::HAL_StatusTypeDef Rtc::getRtcTime(HAL::RTC_TimeTypeDef *halTime) {

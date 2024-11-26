@@ -35,9 +35,9 @@ namespace Stm32Rtc {
          *
          * @param time Pointer to a TimeType structure where the retrieved time will be stored.
          */
-        void getTime(TimeType *time);
+        void getTime(TimeType &time);
 
-        void setTime(const TimeType *time);
+        bool setTime(const TimeType &time);
 
         /**
          * Retrieves the current date from the RTC and stores it in the provided DateType structure.
@@ -46,9 +46,9 @@ namespace Stm32Rtc {
          *
          * @param date Pointer to a DateType structure where the retrieved date will be stored.
          */
-        void getDate(DateType *date);
+        void getDate(DateType &date);
 
-        void setDate(const DateType *date);
+        bool setDate(const DateType &date);
 
         /**
          * Retrieves the current date and time from the RTC and stores it in the provided DateTimeType structure.
@@ -57,9 +57,9 @@ namespace Stm32Rtc {
          *
          * @param dateTime Pointer to a DateTimeType structure where the retrieved date and time will be stored.
          */
-        void getDateTime(DateTimeType *dateTime);
+        bool getDateTime(DateTimeType &dateTime);
 
-        void setDateTime(const DateTimeType *dateTime);
+        bool setDateTime(const DateTimeType &dateTime);
 
 
 
