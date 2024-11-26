@@ -32,6 +32,8 @@ namespace Stm32Rtc {
         void setTimestamp(timestamp_t timestamp);
 
         size_t strftime(char *str, size_t count, const char *format);
+
+        static timestamp_t mktime(struct tm *tp);
     };
 
     inline void DateTimeType::reset() {
@@ -53,6 +55,7 @@ namespace Stm32Rtc {
         tp->tm_wday = this->WeekDay % 7;
         tp->tm_yday = -1;
         tp->tm_isdst = -1;
+        mktime(tp);
     }
 
     inline void DateTimeType::setFromStructTm(const struct tm *tp) {
@@ -82,6 +85,10 @@ namespace Stm32Rtc {
         getStructTm(&timeinfo);
         timeinfo.tm_mon++;
         return ::strftime(str, count, format, &timeinfo);
+    }
+
+    inline DateTimeType::timestamp_t DateTimeType::mktime(struct tm *tp) {
+        return ::mktime(tp);
     }
 }
 
