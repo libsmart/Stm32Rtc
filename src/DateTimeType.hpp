@@ -9,6 +9,7 @@
 #include "TimeType.hpp"
 #include "DateType.hpp"
 #include <ctime>
+#include <algorithm>
 #include <limits.h>
 
 namespace Stm32Rtc {
