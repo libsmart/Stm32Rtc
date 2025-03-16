@@ -10,7 +10,8 @@
 #include "DateType.hpp"
 #include <ctime>
 #include <algorithm>
-#include <limits.h>
+#include <climits>
+#include "String/FixedString.hpp"
 
 namespace Stm32Rtc {
     class DateTimeType : public TimeType, public DateType {
@@ -19,6 +20,7 @@ namespace Stm32Rtc {
 
         DateTimeType() = default;
 
+        explicit DateTimeType(timestamp_t timestamp) { setTimestamp(timestamp); }
 
         void reset();
 
@@ -33,6 +35,9 @@ namespace Stm32Rtc {
         void setTimestamp(timestamp_t timestamp);
 
         size_t strftime(char *str, size_t count, const char *format);
+
+        template<std::size_t N>
+        size_t strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format);
 
         static timestamp_t mktime(struct tm *tp);
     };
@@ -86,6 +91,16 @@ namespace Stm32Rtc {
         getStructTm(&timeinfo);
         timeinfo.tm_mon++;
         return ::strftime(str, count, format, &timeinfo);
+    }
+
+    template<std::size_t N>
+    size_t DateTimeType::strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format) {
+        // auto ret = strftime(nullptr, 0, format);
+        size_t ret = 50;
+        char tmpstr[ret]{};
+        ret = strftime(tmpstr, sizeof(tmpstr), format);
+        fixedString.set(tmpstr);
+        return ret;
     }
 
     inline DateTimeType::timestamp_t DateTimeType::mktime(struct tm *tp) {
