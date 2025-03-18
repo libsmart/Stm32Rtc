@@ -11,6 +11,7 @@
 #include <ctime>
 #include <algorithm>
 #include <climits>
+#include <charconv>
 #include "String/FixedString.hpp"
 
 namespace Stm32Rtc {
@@ -40,6 +41,8 @@ namespace Stm32Rtc {
         size_t strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format);
 
         static timestamp_t mktime(struct tm *tp);
+
+        bool setFromIso8601(const char *datetimestring);
     };
 
     inline void DateTimeType::reset() {
@@ -105,6 +108,68 @@ namespace Stm32Rtc {
 
     inline DateTimeType::timestamp_t DateTimeType::mktime(struct tm *tp) {
         return ::mktime(tp);
+    }
+
+    inline bool DateTimeType::setFromIso8601(const char *datetimestring) {
+        int year = 0;
+        int month = 0;
+        int day = 0;
+        int h = 0;
+        int m = 0;
+        int s = 0;
+
+        std::from_chars_result result{};
+
+        result = std::from_chars(datetimestring, datetimestring + 4, year);
+        if (result.ec != std::errc() || *result.ptr != '-') {
+            // throw std::runtime_error("resultObject.info.serverTime malformed");
+            return false;
+        }
+
+        result = std::from_chars(datetimestring + 5, datetimestring + 7, month);
+        if (result.ec != std::errc() || *result.ptr != '-') {
+            // throw std::runtime_error("resultObject.info.serverTime malformed");
+            return false;
+        }
+
+        result = std::from_chars(datetimestring + 8, datetimestring + 10, day);
+        if (result.ec != std::errc() || *result.ptr != 'T') {
+            // throw std::runtime_error("resultObject.info.serverTime malformed");
+            return false;
+        }
+
+        result = std::from_chars(datetimestring + 11, datetimestring + 13, h);
+        if (result.ec != std::errc() || *result.ptr != ':') {
+            // throw std::runtime_error("resultObject.info.serverTime malformed");
+            return false;
+        }
+
+        result = std::from_chars(datetimestring + 14, datetimestring + 16, m);
+        if (result.ec != std::errc() || *result.ptr != ':') {
+            // throw std::runtime_error("resultObject.info.serverTime malformed");
+            return false;
+        }
+
+        result = std::from_chars(datetimestring + 17, datetimestring + 19, s);
+        if (result.ec != std::errc()) {
+            // throw std::runtime_error("resultObject.info.serverTime malformed");
+            return false;
+        }
+
+        struct tm tmstruct{};
+        tmstruct.tm_year = year - 1900;
+        tmstruct.tm_mon = month - 1;
+        tmstruct.tm_mday = day;
+        tmstruct.tm_hour = h;
+        tmstruct.tm_min = m;
+        tmstruct.tm_sec = s;
+        tmstruct.tm_isdst = -1;
+        tmstruct.tm_wday = -1;
+        tmstruct.tm_yday = -1;
+
+        mktime(&tmstruct);
+        setFromStructTm(&tmstruct);
+        return true;
     }
 }
 
