@@ -43,6 +43,14 @@ namespace Stm32Rtc {
         static timestamp_t mktime(struct tm *tp);
 
         bool setFromIso8601(const char *datetimestring);
+
+        template<std::size_t N>
+        void getIso8601(Stm32Common::String::FixedString<N> &fixedString);
+
+        void getIso8601(char *str, size_t sz);
+
+    private:
+        static constexpr char ISO8602_FORMAT[] = "%Y-%m-%dT%H:%M:%S";
     };
 
     inline void DateTimeType::reset() {
@@ -170,6 +178,19 @@ namespace Stm32Rtc {
         mktime(&tmstruct);
         setFromStructTm(&tmstruct);
         return true;
+    }
+
+    template<std::size_t N>
+    void DateTimeType::getIso8601(Stm32Common::String::FixedString<N> &fixedString) {
+        strftime(fixedString, ISO8602_FORMAT);
+        // fixedString.printf(".%03ldZ", 0);
+        // fixedString.printf(".%03ld", 0);
+    }
+
+    inline void DateTimeType::getIso8601(char *str, const size_t sz) {
+        strftime(str, sz, ISO8602_FORMAT);
+        // snprintf(str, sz, "%s.%03ldZ", str, 0);
+        // snprintf(str, sz, "%s.%03ld", str, 0);
     }
 }
 
