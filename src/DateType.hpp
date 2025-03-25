@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: AGPL-3.0-only
  */
 
-#include <main.h>
-#include <utility>
-
 #ifndef LIBSMART_STM32RTC_DATETYPE_HPP
 #define LIBSMART_STM32RTC_DATETYPE_HPP
+
+#include <main.h>
+#include <utility>
 
 namespace Stm32Rtc {
     namespace HAL {
@@ -67,7 +67,7 @@ namespace Stm32Rtc {
 
         void reset() { *static_cast<HAL::RTC_DateTypeDef *>(this) = {0}; }
 
-        bool isValid() { return Month >= 1 && Month <= 12; };
+        [[nodiscard]] bool isValid() const { return Month >= 1 && Month <= 12; };
     };
 }
 #endif

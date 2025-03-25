@@ -25,7 +25,7 @@ namespace Stm32Rtc {
 
         void reset();
 
-        bool isValid();
+        [[nodiscard]] bool isValid() const;
 
         void getStructTm(struct tm *tp);
 
@@ -58,7 +58,7 @@ namespace Stm32Rtc {
         TimeType::reset();
     }
 
-    inline bool DateTimeType::isValid() {
+    inline bool DateTimeType::isValid() const {
         return DateType::isValid() && TimeType::isValid();
     }
 

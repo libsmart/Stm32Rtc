@@ -3,11 +3,11 @@
  * SPDX-License-Identifier: BSD-3-Clause
  */
 
-#include <main.h>
-#include <utility>
-
 #ifndef LIBSMART_STM32RTC_TIMETYPE_HPP
 #define LIBSMART_STM32RTC_TIMETYPE_HPP
+
+#include <main.h>
+#include <utility>
 
 namespace Stm32Rtc {
     namespace HAL {
@@ -40,7 +40,7 @@ namespace Stm32Rtc {
 
         void reset() { *static_cast<HAL::RTC_TimeTypeDef *>(this) = {0}; }
 
-        bool isValid() { return true; }
+        static bool isValid() { return true; }
     };
 }
 #endif
