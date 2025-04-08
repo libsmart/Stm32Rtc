@@ -21,7 +21,7 @@ namespace Stm32Rtc {
 
         DateTimeType() = default;
 
-        explicit DateTimeType(timestamp_t timestamp) { setTimestamp(timestamp); }
+        explicit DateTimeType(timestamp_t timestamp) { setFromTimestamp(timestamp); }
 
         void reset();
 
@@ -33,7 +33,7 @@ namespace Stm32Rtc {
 
         timestamp_t getTimestamp();
 
-        void setTimestamp(timestamp_t timestamp);
+        void setFromTimestamp(timestamp_t timestamp);
 
         size_t strftime(char *str, size_t count, const char *format);
 
@@ -95,15 +95,15 @@ namespace Stm32Rtc {
         return ::mktime(&timeinfo);
     }
 
-    inline void DateTimeType::setTimestamp(timestamp_t timestamp) {
-        tm *timeinfo = localtime(&timestamp);
-        setFromStructTm(timeinfo);
+    inline void DateTimeType::setFromTimestamp(timestamp_t timestamp) {
+        tm timeinfo{};
+        localtime_r(&timestamp, &timeinfo);
+        setFromStructTm(&timeinfo);
     }
 
     inline size_t DateTimeType::strftime(char *str, size_t count, const char *format) {
-        tm timeinfo{0};
+        tm timeinfo{};
         getStructTm(&timeinfo);
-        timeinfo.tm_mon++;
         return ::strftime(str, count, format, &timeinfo);
     }
 
