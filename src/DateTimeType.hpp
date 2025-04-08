@@ -42,6 +42,9 @@ namespace Stm32Rtc {
 
         static timestamp_t mktime(struct tm *tp);
 
+        template<std::size_t N>
+        bool setFromIso8601(Stm32Common::String::FixedString<N> &fixedString);
+
         bool setFromIso8601(const char *datetimestring);
 
         template<std::size_t N>
@@ -114,8 +117,14 @@ namespace Stm32Rtc {
         return ret;
     }
 
+
     inline DateTimeType::timestamp_t DateTimeType::mktime(struct tm *tp) {
         return ::mktime(tp);
+    }
+
+    template<std::size_t N>
+    bool DateTimeType::setFromIso8601(Stm32Common::String::FixedString<N> &fixedString) {
+        return setFromIso8601(fixedString.c_str());
     }
 
     inline bool DateTimeType::setFromIso8601(const char *datetimestring) {
