@@ -27,18 +27,18 @@ namespace Stm32Rtc {
 
         [[nodiscard]] bool isValid() const;
 
-        void getStructTm(struct tm *tp);
+        void getStructTm(struct tm *tp) const;
 
         void setFromStructTm(const struct tm *tp);
 
-        timestamp_t getTimestamp();
+        timestamp_t getTimestamp() const;
 
         void setFromTimestamp(timestamp_t timestamp);
 
-        size_t strftime(char *str, size_t count, const char *format);
+        size_t strftime(char *str, size_t count, const char *format) const;
 
         template<std::size_t N>
-        size_t strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format);
+        size_t strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format) const;
 
         static timestamp_t mktime(struct tm *tp);
 
@@ -48,9 +48,9 @@ namespace Stm32Rtc {
         bool setFromIso8601(const char *datetimestring);
 
         template<std::size_t N>
-        void getIso8601(Stm32Common::String::FixedString<N> &fixedString);
+        void getIso8601(Stm32Common::String::FixedString<N> &fixedString) const;
 
-        void getIso8601(char *str, size_t sz);
+        void getIso8601(char *str, size_t sz) const;
 
     private:
         static constexpr char ISO8602_FORMAT[] = "%Y-%m-%dT%H:%M:%S";
@@ -65,7 +65,7 @@ namespace Stm32Rtc {
         return DateType::isValid() && TimeType::isValid();
     }
 
-    inline void DateTimeType::getStructTm(struct tm *tp) {
+    inline void DateTimeType::getStructTm(struct tm *tp) const {
         tp->tm_sec = this->Seconds;
         tp->tm_min = this->Minutes;
         tp->tm_hour = this->Hours;
@@ -89,34 +89,29 @@ namespace Stm32Rtc {
         this->WeekDay = (tp->tm_wday + 6) % 7 + 1;
     }
 
-    inline DateTimeType::timestamp_t DateTimeType::getTimestamp() {
+    inline DateTimeType::timestamp_t DateTimeType::getTimestamp() const {
         tm timeinfo{0};
         getStructTm(&timeinfo);
         return ::mktime(&timeinfo);
     }
 
-    inline void DateTimeType::setFromTimestamp(timestamp_t timestamp) {
+    inline void DateTimeType::setFromTimestamp(const timestamp_t timestamp) {
         tm timeinfo{};
         localtime_r(&timestamp, &timeinfo);
         setFromStructTm(&timeinfo);
     }
 
-    inline size_t DateTimeType::strftime(char *str, size_t count, const char *format) {
+    inline size_t DateTimeType::strftime(char *str, const size_t count, const char *format) const {
         tm timeinfo{};
         getStructTm(&timeinfo);
         return ::strftime(str, count, format, &timeinfo);
     }
 
     template<std::size_t N>
-    size_t DateTimeType::strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format) {
-        // auto ret = strftime(nullptr, 0, format);
-        size_t ret = 50;
-        char tmpstr[ret]{};
-        ret = strftime(tmpstr, sizeof(tmpstr), format);
-        fixedString.set(tmpstr);
-        return ret;
+    size_t DateTimeType::strftime(Stm32Common::String::FixedString<N> &fixedString, const char *format) const {
+        fixedString.clear();
+        return strftime(const_cast<char *>(fixedString.c_str()), fixedString.bufferCapacity(), format);
     }
-
 
     inline DateTimeType::timestamp_t DateTimeType::mktime(struct tm *tp) {
         return ::mktime(tp);
@@ -190,16 +185,12 @@ namespace Stm32Rtc {
     }
 
     template<std::size_t N>
-    void DateTimeType::getIso8601(Stm32Common::String::FixedString<N> &fixedString) {
+    void DateTimeType::getIso8601(Stm32Common::String::FixedString<N> &fixedString) const {
         strftime(fixedString, ISO8602_FORMAT);
-        // fixedString.printf(".%03ldZ", 0);
-        // fixedString.printf(".%03ld", 0);
     }
 
-    inline void DateTimeType::getIso8601(char *str, const size_t sz) {
+    inline void DateTimeType::getIso8601(char *str, const size_t sz) const {
         strftime(str, sz, ISO8602_FORMAT);
-        // snprintf(str, sz, "%s.%03ldZ", str, 0);
-        // snprintf(str, sz, "%s.%03ld", str, 0);
     }
 }
 
